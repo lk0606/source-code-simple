@@ -1,0 +1,30 @@
+{
+  "name": "vite-simple",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon vite.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lk0606/vite-simple.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lk0606/vite-simple/issues"
+  },
+  "homepage": "https://github.com/lk0606/vite-simple#readme",
+  "dependencies": {
+    "koa": "^2.13.1",
+    "vue": "^2.6.14"
+  },
+  "devDependencies": {
+    "@vue/compiler-dom": "^3.1.1",
+    "@vue/compiler-sfc": "^3.1.1",
+    "nodemon": "^2.0.7"
+  }
+}
