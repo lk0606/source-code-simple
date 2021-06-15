@@ -16,6 +16,9 @@ function rewriteImport(content) {
     })
 }
 
+const cwd = process.cwd()
+const baseUrl = path.join(cwd, 'demo')
+
 app.use(async (ctx) => {
     const {
         url,
@@ -23,16 +26,16 @@ app.use(async (ctx) => {
     } = ctx.request
     if (url === '/') {
         ctx.type = 'text/html'
-        const content = fs.readFileSync(path.join(__dirname, './index.html'), 'utf-8')
+        const content = fs.readFileSync(path.join(baseUrl, 'index.html'), 'utf-8')
         ctx.body = content
     } else if (url.endsWith('.js')) {
         ctx.type = 'text/javascript'
-        const ret = fs.readFileSync(path.join(__dirname, url), 'utf-8')
+        const ret = fs.readFileSync(path.join(baseUrl, `${url}`), 'utf-8')
         // 重写裸模块导入部分
         ctx.body = rewriteImport(ret)
     } else if (url.startsWith('/@modules')) {
         const moduleName = url.replace("/@modules/", "");
-        const prefix = path.join(__dirname, "./node_modules", moduleName);
+        const prefix = path.join(cwd, "./node_modules", moduleName);
         const module = require(prefix + "/package.json").module;
         const filePath = path.join(prefix, module);
         const ret = fs.readFileSync(filePath, "utf8");
@@ -40,7 +43,7 @@ app.use(async (ctx) => {
         ctx.body = rewriteImport(ret);
     } else if (url.indexOf('.vue') > -1) {
         // SFC路径
-        const p = path.join(__dirname, url.split("?")[0]);
+        const p = path.join(baseUrl, url.split("?")[0]);
         const ret = compilerSfc.parse(fs.readFileSync(p, 'utf-8'))
         // SFC文件请求
         if (!query.type) {

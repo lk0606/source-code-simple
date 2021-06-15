@@ -12,7 +12,7 @@
                 "<node_internals>/**"
             ],
             "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/nodemon",
-            "program": "${workspaceFolder}/vite.js"
+            "program": "${workspaceFolder}/packages/vite.js"
         }
     ]
 }
