@@ -1,10 +1,12 @@
 const Koa = require('koa')
+const cors = require('@koa/cors')
 const path = require('path')
 const fs = require('fs')
 const compilerSfc = require("@vue/compiler-sfc");
 const compilerDom = require("@vue/compiler-dom");
 
 const app = new Koa()
+app.use(cors())
 
 function rewriteImport(content) {
     return content.replace(/ from ['|"]([^'"]+)['|"]/g, function (s0, s1) {
@@ -30,9 +32,16 @@ app.use(async (ctx) => {
         ctx.body = content
     } else if (url.endsWith('.js')) {
         ctx.type = 'text/javascript'
-        const ret = fs.readFileSync(path.join(baseUrl, `${url}`), 'utf-8')
-        // 重写裸模块导入部分
-        ctx.body = rewriteImport(ret)
+        // test
+        if(url.indexOf('reactive.js') !== -1) {
+            const ret = fs.readFileSync(path.join(`./${url}`), 'utf-8')
+            // 重写裸模块导入部分
+            ctx.body = rewriteImport(ret)
+        } else {
+            const ret = fs.readFileSync(path.join(baseUrl, `${url}`), 'utf-8')
+            // 重写裸模块导入部分
+            ctx.body = rewriteImport(ret)
+        }
     } else if (url.startsWith('/@modules')) {
         const moduleName = url.replace("/@modules/", "");
         const prefix = path.join(cwd, "./node_modules", moduleName);

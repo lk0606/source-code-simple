@@ -19,8 +19,9 @@
   },
   "homepage": "https://github.com/lk0606/vite-simple#readme",
   "dependencies": {
+    "@koa/cors": "^3.1.0",
     "koa": "^2.13.1",
-    "vue": "^2.6.14"
+    "vue": "^3.1.1"
   },
   "devDependencies": {
     "@vue/compiler-dom": "^3.1.1",
