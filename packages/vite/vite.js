@@ -41,7 +41,7 @@ app.use(async (ctx) => {
         //     // 重写裸模块导入部分
         //     ctx.body = rewriteImport(ret)
         // } else {
-            const ret = fs.readFileSync(path.join(viteDemoDir, `${url}`), 'utf-8')
+            const ret = fs.readFileSync(path.join(cwd, `${url}`), 'utf-8')
             // 重写裸模块导入部分
             ctx.body = rewriteImport(ret)
         // }
@@ -55,7 +55,7 @@ app.use(async (ctx) => {
         ctx.body = rewriteImport(ret);
     } else if (url.indexOf('.vue') > -1) {
         // SFC路径
-        const p = path.join(viteDemoDir, url.split("?")[0]);
+        const p = path.join(cwd, url.split("?")[0]);
         const ret = compilerSfc.parse(fs.readFileSync(p, 'utf-8'))
         // SFC文件请求
         if (!query.type) {
