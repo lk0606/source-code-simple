@@ -9,9 +9,8 @@
 <script>
 import {
     reactive,
-    toRefs,
 } from "vue";
-// import { reactive } from "../../packages/reactive.js";
+// import { reactive } from "../../../common/vue3/reactive.js";
 
 export default {
     setup() {
@@ -19,7 +18,6 @@ export default {
             count: 0,
         });
         return {
-            // ...toRefs(state),
             state,
         };
     },

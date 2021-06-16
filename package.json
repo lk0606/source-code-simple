@@ -1,31 +1,24 @@
 {
-  "name": "vite-simple",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "start": "nodemon ./packages/vite.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/lk0606/vite-simple.git"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/lk0606/vite-simple/issues"
-  },
-  "homepage": "https://github.com/lk0606/vite-simple#readme",
-  "dependencies": {
-    "@koa/cors": "^3.1.0",
-    "koa": "^2.13.1",
-    "vue": "^3.1.1"
-  },
-  "devDependencies": {
-    "@vue/compiler-dom": "^3.1.1",
-    "@vue/compiler-sfc": "^3.1.1",
-    "nodemon": "^2.0.7"
-  }
+    "name": "source-code-simple",
+    "version": "1.0.0",
+    "private": true,
+    "description": "",
+    "main": "index.js",
+    "workspaces": [
+        "packages/*"
+    ],
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/lk0606/source-code-simple.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/lk0606/source-code-simple/issues"
+    },
+    "homepage": "https://github.com/lk0606/source-code-simple#readme"
 }

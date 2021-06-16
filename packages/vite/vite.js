@@ -4,6 +4,8 @@ const path = require('path')
 const fs = require('fs')
 const compilerSfc = require("@vue/compiler-sfc");
 const compilerDom = require("@vue/compiler-dom");
+const { logServerInfo } = require("../common/utils");
+const { PATHS } = require('../common/constant')
 
 const app = new Koa()
 app.use(cors())
@@ -19,7 +21,7 @@ function rewriteImport(content) {
 }
 
 const cwd = process.cwd()
-const baseUrl = path.join(cwd, 'demo')
+const viteDemoDir = path.join(cwd, 'demo')
 
 app.use(async (ctx) => {
     const {
@@ -28,23 +30,24 @@ app.use(async (ctx) => {
     } = ctx.request
     if (url === '/') {
         ctx.type = 'text/html'
-        const content = fs.readFileSync(path.join(baseUrl, 'index.html'), 'utf-8')
+        const content = fs.readFileSync(path.join(viteDemoDir, 'index.html'), 'utf-8')
         ctx.body = content
     } else if (url.endsWith('.js')) {
         ctx.type = 'text/javascript'
         // test
-        if(url.indexOf('reactive.js') !== -1) {
-            const ret = fs.readFileSync(path.join(`./${url}`), 'utf-8')
+        // if(url.indexOf('reactive.js') !== -1) {
+        //     console.log('url :>> ', url);
+        //     const ret = fs.readFileSync(path.join(PATHS.rootDir, 'packages', url), 'utf-8')
+        //     // 重写裸模块导入部分
+        //     ctx.body = rewriteImport(ret)
+        // } else {
+            const ret = fs.readFileSync(path.join(viteDemoDir, `${url}`), 'utf-8')
             // 重写裸模块导入部分
             ctx.body = rewriteImport(ret)
-        } else {
-            const ret = fs.readFileSync(path.join(baseUrl, `${url}`), 'utf-8')
-            // 重写裸模块导入部分
-            ctx.body = rewriteImport(ret)
-        }
+        // }
     } else if (url.startsWith('/@modules')) {
         const moduleName = url.replace("/@modules/", "");
-        const prefix = path.join(cwd, "./node_modules", moduleName);
+        const prefix = path.join(PATHS.rootNodeModules, moduleName);
         const module = require(prefix + "/package.json").module;
         const filePath = path.join(prefix, module);
         const ret = fs.readFileSync(filePath, "utf8");
@@ -52,7 +55,7 @@ app.use(async (ctx) => {
         ctx.body = rewriteImport(ret);
     } else if (url.indexOf('.vue') > -1) {
         // SFC路径
-        const p = path.join(baseUrl, url.split("?")[0]);
+        const p = path.join(viteDemoDir, url.split("?")[0]);
         const ret = compilerSfc.parse(fs.readFileSync(p, 'utf-8'))
         // SFC文件请求
         if (!query.type) {
@@ -80,6 +83,7 @@ app.use(async (ctx) => {
 
 })
 
-app.listen(4000, () => {
-    console.log('simple vite start...');
+const port = 4000
+app.listen(port, () => {
+    logServerInfo(port)
 })
