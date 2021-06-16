@@ -4,6 +4,11 @@ const parser = require("@babel/parser");
 const traverse = require("@babel/traverse").default;
 const babel = require("@babel/core");
 
+/**
+ * @desc 分析模块，组装信息。包括解析文件、文件依赖、文件代码
+ * @param {string} file file path
+ * @returns
+ */
 function getModuleInfo(file) {
     // 读取⽂件
     const body = fs.readFileSync(file, "utf-8");
@@ -18,7 +23,8 @@ function getModuleInfo(file) {
             node
         }) {
             const dirname = path.dirname(file);
-            const abspath = "./" + path.join(dirname, node.source.value);
+            const abspath = path.join(dirname, node.source.value);
+            // path
             deps[node.source.value] = abspath;
         },
     })
@@ -35,8 +41,26 @@ function getModuleInfo(file) {
     };
     return moduleInfo;
 }
-const info = getModuleInfo("./src/index.js");
-console.log("info:", info);
+
+/**
+ * @desc 递归查找文件引用，扁平化存储到temp
+ * @param {array} temp
+ * @param {object} param
+ * @property {object} param.deps filePathName: path
+ */
+ function getDeps(temp, {
+    deps
+}) {
+    const keys = Object.keys(deps)
+    if(keys.length <= 0) {
+        return
+    }
+    Object.keys(deps).forEach((key) => {
+        const child = getModuleInfo(deps[key]);
+        temp.push(child);
+        getDeps(temp, child);
+    });
+}
 
 /**
  * 模块解析
@@ -56,38 +80,30 @@ function parseModules(file) {
     });
     return depsGraph;
 }
-/**
- * 获取依赖
- * @param {*} temp
- * @param {*} param1
- */
-function getDeps(temp, {
-    deps
-}) {
-    Object.keys(deps).forEach((key) => {
-        const child = getModuleInfo(deps[key]);
-        temp.push(child);
-        getDeps(temp, child);
-    });
-}
 
 function bundle(file) {
-    const depsGraph = JSON.stringify(parseModules(file));
+    const depsGraph = JSON.stringify(parseModules(file), null, 4);
     return `(function (graph) {
         function require(file) {
+            // 取引用文件代码
             function absRequire(relPath) {
                 return require(graph[file].deps[relPath])
-                }
-                var exports = {};
-                (function (require,exports,code) {
-                    eval(code)
-                })(absRequire,exports,graph[file].code)
+            }
+            var exports = {};
+            // 按依赖顺序，执行代码
+            (function (require, exports, code) {
+                eval(code)
+            })(absRequire, exports, graph[file].code)
             return exports
         }
         require('${file}')
     })(${depsGraph})`;
 }
 
-const content = bundle('./src/index.js')
-!fs.existsSync("./dist") && fs.mkdirSync("./dist");
-fs.writeFileSync("./dist/bundle.js", content);
+const entry = path.join(__dirname, 'demo/index.js')
+const content = bundle(entry);
+
+const output = path.join(__dirname, './dist');
+
+!fs.existsSync(output) && fs.mkdirSync(output);
+fs.writeFileSync(path.join(output, 'bundle.js'), content);

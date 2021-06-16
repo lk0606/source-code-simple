@@ -12,7 +12,27 @@
                 "<node_internals>/**"
             ],
             "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/nodemon",
-            "program": "${workspaceFolder}/packages/vite.js"
-        }
+            "program": "${workspaceFolder}/packages/vite/index.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "webpack",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "runtimeExecutable": "node",
+            "program": "${workspaceFolder}/packages/webpack/index.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "node 当前文件",
+            "skipFiles": ["<node_internals>/**"],
+            "args": [
+            ],
+            "runtimeExecutable": "node",
+            "program": "${file}"
+        },
     ]
 }
